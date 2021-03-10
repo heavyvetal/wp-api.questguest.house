@@ -46,7 +46,7 @@ class WP_JSON_Timetable {
 
     public function get_timetable_pirates()
     {
-        // Пираты Карибского моря: Сундук мертвеца
+        // Pirates of the Caribbean: Dead Man's Chest
         $post_id_regs = 492;
         $id_calendars = 4;
 
@@ -55,7 +55,7 @@ class WP_JSON_Timetable {
 
     public function get_timetable_maze()
     {
-        // Лабиринт
+        // Maze
         $post_id_regs = 495;
         $id_calendars = 8;
 
@@ -64,7 +64,7 @@ class WP_JSON_Timetable {
 
     public function get_timetable_mission()
     {
-        // Миссия выполнима 2
+        // Mission is possible 2
         $post_id_regs = 494;
         $id_calendars = 6;
 
@@ -73,7 +73,7 @@ class WP_JSON_Timetable {
 
     public function get_timetable_aztec()
     {
-        // Сокровища ацтеков
+        // Aztec treasures
         $post_id_regs = 1770;
         $id_calendars = 7;
 
@@ -264,7 +264,6 @@ class WP_JSON_Timetable {
             $time = substr($time, 0, 5);
 
             if ($date_request == $date && $time_request == $time) $is_free = false;
-            //echo $date." ".$time."\n";
         }
 
         return $is_free;
