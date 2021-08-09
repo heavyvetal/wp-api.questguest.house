@@ -41,6 +41,10 @@ class WP_JSON_Booking {
             '/booking/aztec' => array(
                 array( array( $this, 'get_timetable' ),  WP_JSON_Server::READABLE ),
                 array( array( $this, 'create_booking_aztec' ),    WP_JSON_Server::CREATABLE | WP_JSON_Server::ACCEPT_JSON ),
+            ),
+            '/booking/gravity' => array(
+                array( array( $this, 'get_timetable' ),  WP_JSON_Server::READABLE ),
+                array( array( $this, 'create_booking_gravity' ),    WP_JSON_Server::CREATABLE | WP_JSON_Server::ACCEPT_JSON ),
             )
 		);
 
@@ -59,6 +63,9 @@ class WP_JSON_Booking {
 		return $response;
 	}
 
+    /**
+     * @return array
+     */
     public function create_booking_pirates($data)
     {
         // Пираты Карибского моря: Сундук мертвеца
@@ -68,6 +75,9 @@ class WP_JSON_Booking {
 	    return $this->create_booking($data, $post_id_regs, $id_calendars);
     }
 
+    /**
+     * @return array
+     */
     public function create_booking_maze($data)
     {
         // Лабиринт
@@ -77,6 +87,9 @@ class WP_JSON_Booking {
         return $this->create_booking($data, $post_id_regs, $id_calendars);
     }
 
+    /**
+     * @return array
+     */
     public function create_booking_mission($data)
     {
         // Миссия выполнима 2
@@ -86,6 +99,9 @@ class WP_JSON_Booking {
         return $this->create_booking($data, $post_id_regs, $id_calendars);
     }
 
+    /**
+     * @return array
+     */
     public function create_booking_aztec($data)
     {
         // Сокровища ацтеков
@@ -95,7 +111,25 @@ class WP_JSON_Booking {
         return $this->create_booking($data, $post_id_regs, $id_calendars);
     }
 
+    /**
+     * @return array
+     */
+    public function create_booking_gravity($data)
+    {
+        // Гравити Фолз
+        $post_id_regs = 2613;
+        $id_calendars = 9;
+
+        return $this->create_booking($data, $post_id_regs, $id_calendars);
+    }
+
 	/**
+     * Books a time
+     *
+     * @param array $data
+     * @param int $post_id_regs
+     * @param int $id_calendars
+     *
 	 * @return array
 	 */
 	public function create_booking($data, $post_id_regs, $id_calendars) {
@@ -107,10 +141,12 @@ class WP_JSON_Booking {
 	        $error = true;
             $error_msg .= '[не указали имя]';
         }
+
 	    if (empty($data['phone']) && empty($data['email'])) {
 	        $error = true;
             $error_msg .= '[не предоставили контактные данные]';
         }
+
         if (empty($data['date']) || empty($data['time'])) {
             $error = true;
             $error_msg .= '[не указали дату/время]';
@@ -154,6 +190,16 @@ class WP_JSON_Booking {
 	}
 
     /**
+     * Creates an order record in the DB
+     *
+     * @param string $name
+     * @param string $phone
+     * @param string $email
+     * @param string $comment
+     * @param string $time_to_book
+     * @param int $post_id_regs
+     * @param int $id_calendars
+     *
      * @return bool
      */
     public function insert_into_db($name, $phone, $email, $comment, $time_to_book, $post_id_regs, $id_calendars)
@@ -170,14 +216,20 @@ class WP_JSON_Booking {
     }
 
     /**
+     * Checks busy times for a registration
+     *
+     * @param string $date_request
+     * @param string $time_request
+     * @param int $post_id_regs
+     *
      * @return bool
      */
-    public function check_busy_times($date_request, $time_request, $post_id_regs, $id_calendars)
+    public function check_busy_times($date_request, $time_request, $post_id_regs)
     {
         global $wpdb;
         $is_free = true;
 
-        $response = $wpdb->get_results( "SELECT datt FROM regs WHERE post_id=".$post_id_regs." ORDER BY id DESC LIMIT 20", ARRAY_A );
+        $response = $wpdb->get_results( "SELECT datt FROM regs WHERE post_id=".$post_id_regs." ORDER BY id DESC LIMIT 160", ARRAY_A );
 
         foreach ($response as $item) {
 
@@ -187,7 +239,6 @@ class WP_JSON_Booking {
             $time = substr($time, 0, 5);
 
             if ($date_request == $date && $time_request == $time) $is_free = false;
-            //echo $date." ".$time."\n";
         }
 
         return $is_free;
